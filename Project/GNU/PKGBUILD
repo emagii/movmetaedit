@@ -1,0 +1,58 @@
+# $Id$
+# Maintainer: MediaArea.net SARL <info@mediaarea.net>
+
+pkgname=('movmetaedit' 'movmetaedit-gui')
+pkgver=17.10.1.20180915
+pkgrel=1
+pkgdesc="(To be filled)"
+url="http://mediaarea.net"
+license=('MIT')
+source=(${pkgname}_${pkgver}-1.tar.gz)
+md5sums=('00000000000000000000000000000000')
+arch=('i686' 'x86_64')
+makedepends=('qt5-base' 'qt5-tools' 'ca-certificates' 'libzen')
+
+prepare() {
+
+    cd "${srcdir}"/movmetaedit/Project/GNU/CLI
+    sh ./autogen
+    ./configure --prefix=/usr
+
+    cd "${srcdir}"/movmetaedit/Project/Qt
+    ./prepare
+}
+
+build() {
+    cd "${srcdir}"/movmetaedit/Project/GNU/CLI
+    make
+
+    cd "${srcdir}"/movmetaedit/Project/Qt
+    make
+}
+
+package_movmetaedit() {
+    pkgdesc="${pkgdesc} (CLI)"
+    depends=('libzen')
+
+    cd "${srcdir}"/movmetaedit/Project/GNU/CLI
+    make DESTDIR="${pkgdir}" install
+
+    install -D -m 0644 "${srcdir}"/movmetaedit/History_CLI.txt "${pkgdir}"/usr/share/docs/${pkgname}/History.txt
+    install -D -m 0644 "${srcdir}"/movmetaedit/License.html "${pkgdir}"/usr/share/licenses/${pkgname}/License.html
+}
+
+package_movmetaedit-gui() {
+    pkgdesc="${pkgdesc} (GUI)"
+    depends=('qt5-base')
+
+    install -D -m 0644 "${srcdir}"/movmetaedit/Project/Qt/movmetaedit-gui "${pkgdir}"/usr/bin/movmetaedit-gui
+    install -D -m 0644 "${srcdir}"/movmetaedit/Source/Resource/Image/Icon.png "${pkgdir}"/usr/share/icons/hicolor/128x128/apps/movmetaedit.png
+    install -D -m 0644 "${srcdir}"/movmetaedit/Source/Resource/Image/Icon.png "${pkgdir}"/usr/share/pixmaps/movmetaedit.png
+    install -D -m 0644 "${srcdir}"/movmetaedit/Project/Qt/movmetaedit-gui.desktop "${pkgdir}"/usr/share/applications/movmetaedit-gui.desktop
+    install -D -m 0644 "${srcdir}"/movmetaedit/Project/Qt/movmetaedit-gui.kde3.desktop "${pkgdir}"/usr/share/apps/konqueror/servicemenus/movmetaedit-gui.desktop
+    install -D -m 0644 "${srcdir}"/movmetaedit/Project/Qt/movmetaedit-gui.kde4.desktop "${pkgdir}"/usr/share/kde4/services/ServiceMenus/movmetaedit-gui.desktop
+    install -D -m 0644 "${srcdir}"/movmetaedit/Project/Qt/movmetaedit-gui.kde4.desktop "${pkgdir}"/usr/share/kservices5/ServiceMenus/movmetaedit-gui.desktop
+    install -D -m 0644 "${srcdir}"/movmetaedit/Project/Qt/movmetaedit.metainfo.xml "${pkgdir}"/usr/share/metainfo/movmetaedit-gui.metainfo.xml
+    install -D -m 0644 "${srcdir}"/movmetaedit/History_GUI.txt "${pkgdir}"/usr/share/docs/${pkgname}/History.txt
+    install -D -m 0644 "${srcdir}"/movmetaedit/License.html "${pkgdir}"/usr/share/licenses/${pkgname}/License.html
+}
